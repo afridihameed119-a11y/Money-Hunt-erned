@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - Buy Plans</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: white; }
+        
+        .main-wrapper { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; margin: auto; }
+
+        .header { text-align: center; margin-bottom: 20px; width: 100%; }
+        .header h2 { color: #f39c12; margin-bottom: 5px; font-size: 24px; }
+        .balance-badge { background: rgba(0, 0, 0, 0.3); padding: 8px 15px; border-radius: 20px; display: inline-block; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .plan-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; padding: 25px; text-align: center; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); margin-bottom: 20px; }
+        .plan-card h3 { color: #00d2ff; margin-bottom: 5px; font-size: 22px; }
+        .plan-card .price { font-size: 32px; font-weight: bold; margin-bottom: 10px; color: #f39c12; }
+        .plan-card p { font-size: 13px; margin-bottom: 15px; color: #ddd; line-height: 1.5; }
+        
+        .buy-btn { width: 100%; padding: 12px; background: #00d2ff; border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .buy-btn:hover { background: #3a7bd5; color: white; }
+        .buy-btn:disabled { background: #666; cursor: not-allowed; }
+        
+        .back-btn { color: #ddd; text-decoration: none; font-size: 14px; margin-top: 10px; display: inline-block; }
+        .back-btn:hover { color: white; }
+        
+        #message { text-align: center; margin-top: 15px; font-weight: bold; font-size: 14px; width: 100%; }
+
+        /* Footer */
+        footer { text-align: center; padding: 15px; font-size: 12px; color: #ddd; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: auto; }
+        footer span { color: #f39c12; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="header">
+            <h2>📦 Available Plans</h2>
+            <div class="balance-badge">Current Balance: Rs <span id="currentBalance">Loading...</span></div>
+        </div>
+
+        <!-- Plan 1: Rs 100 -->
+        <div class="plan-card">
+            <h3>Starter Plan</h3>
+            <div class="price">Rs 100</div>
+            <p>Daily Income: Rs 15<br>Valid for 30 Days</p>
+            <button class="buy-btn" onclick="buyPlan('Starter Plan', 100)" id="buyBtn1">Buy Now</button>
+        </div>
+
+        <!-- Plan 2: Rs 200 -->
+        <div class="plan-card">
+            <h3>Silver Plan</h3>
+            <div class="price">Rs 200</div>
+            <p>Daily Income: Rs 35<br>Valid for 30 Days</p>
+            <button class="buy-btn" onclick="buyPlan('Silver Plan', 200)" id="buyBtn2">Buy Now</button>
+        </div>
+
+        <!-- Plan 3: Rs 400 -->
+        <div class="plan-card">
+            <h3>Gold Plan</h3>
+            <div class="price">Rs 400</div>
+            <p>Daily Income: Rs 75<br>Valid for 30 Days</p>
+            <button class="buy-btn" onclick="buyPlan('Gold Plan', 400)" id="buyBtn3">Buy Now</button>
+        </div>
+
+        <p id="message"></p>
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w", authDomain: "earningapp-a6d67.firebaseapp.com", projectId: "earningapp-a6d67", storageBucket: "earningapp-a6d67.firebasestorage.app", messagingSenderId: "818725738178", appId: "1:818725738178:web:fb7e491248a35a2e960d5b" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+        
+        let currentUser = null;
+        let userBalance = 0;
+        const msgBox = document.getElementById('message');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const docRef = doc(db, "Users", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    userBalance = parseInt(docSnap.data().balance) || 0;
+                    document.getElementById('currentBalance').innerText = userBalance;
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        window.buyPlan = async function(planName, price) {
+            if (userBalance < price) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Insufficient Balance! Please deposit first.";
+                return;
+            }
+
+            try {
+                msgBox.style.color = "white";
+                msgBox.innerText = "Processing purchase...";
+                
+                const newBalance = userBalance - price;
+                await updateDoc(doc(db, "Users", currentUser.uid), { balance: newBalance });
+                
+                await addDoc(collection(db, "Orders"), {
+                    uid: currentUser.uid,
+                    planName: planName,
+                    price: price,
+                    status: "Active",
+                    timestamp: serverTimestamp()
+                });
+
+                userBalance = newBalance;
+                document.getElementById('currentBalance').innerText = userBalance;
+
+                msgBox.style.color = "#00ff00";
+                msgBox.innerText = planName + " Purchased Successfully!";
+                
+                setTimeout(() => { 
+                    msgBox.innerText = ""; 
+                }, 3000);
+            } catch (error) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Error: " + error.message;
+            }
+        };
+    </script>
+</body>
+</html>

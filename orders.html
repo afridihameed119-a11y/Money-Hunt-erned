@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - My Orders</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        
+        .main-wrapper { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; margin: auto; }
+
+        .header { text-align: center; margin-bottom: 20px; width: 100%; }
+        .header h2 { font-size: 24px; color: #f39c12; }
+        
+        .orders-container { width: 100%; }
+        
+        .order-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .order-info h3 { font-size: 18px; margin-bottom: 5px; color: #00d2ff; }
+        .order-info p { font-size: 12px; color: #ddd; }
+        .order-status { background: rgba(37, 211, 102, 0.2); color: #25D366; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; border: 1px solid #25D366; }
+        
+        .no-orders { text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; font-size: 14px; color: #ccc; }
+        
+        .back-btn { display: block; text-align: center; margin-top: 20px; color: #ddd; text-decoration: none; font-size: 14px; }
+        .back-btn:hover { color: white; }
+
+        /* Footer */
+        footer { text-align: center; padding: 15px; font-size: 12px; color: #ddd; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: auto; }
+        footer span { color: #f39c12; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="header">
+            <h2>📋 My Orders</h2>
+            <p style="font-size: 14px; color: #ddd; margin-top: 5px;">Your active plans and history</p>
+        </div>
+
+        <div class="orders-container" id="ordersList">
+            <p style="text-align: center;">Loading orders...</p>
+        </div>
+
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w", authDomain: "earningapp-a6d67.firebaseapp.com", projectId: "earningapp-a6d67", storageBucket: "earningapp-a6d67.firebasestorage.app", messagingSenderId: "818725738178", appId: "1:818725738178:web:fb7e491248a35a2e960d5b" };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                fetchMyOrders(user.uid);
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        async function fetchMyOrders(uid) {
+            const ordersList = document.getElementById('ordersList');
+            try {
+                const q = query(collection(db, "Orders"), where("uid", "==", uid));
+                const querySnapshot = await getDocs(q);
+                
+                ordersList.innerHTML = ""; 
+
+                if (querySnapshot.empty) {
+                    ordersList.innerHTML = `<div class="no-orders">You have not purchased any plan yet.</div>`;
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const orderData = doc.data();
+                    
+                    let dateStr = "Just now";
+                    if(orderData.timestamp) {
+                        const date = orderData.timestamp.toDate();
+                        dateStr = date.toLocaleDateString() + " " + date.toLocaleTimeString();
+                    }
+
+                    const cardHtml = `
+                        <div class="order-card">
+                            <div class="order-info">
+                                <h3>${orderData.planName}</h3>
+                                <p>Price: Rs ${orderData.price}</p>
+                                <p>Date: ${dateStr}</p>
+                            </div>
+                            <div class="order-status">${orderData.status}</div>
+                        </div>
+                    `;
+                    ordersList.innerHTML += cardHtml;
+                });
+            } catch (error) {
+                ordersList.innerHTML = `<p style="color: red; text-align: center;">Error loading orders.</p>`;
+                console.error("Error fetching orders: ", error);
+            }
+        }
+    </script>
+</body>
+</html>
