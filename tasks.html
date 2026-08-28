@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - Daily Tasks</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        
+        .main-wrapper { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; margin: auto; }
+
+        .logo-container { text-align: center; margin-bottom: 12px; }
+        .logo-container img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #f39c12; object-fit: cover; box-shadow: 0 0 10px rgba(243,156,18,0.5); }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; width: 100%; }
+        .header h2 { color: #f39c12; font-size: 20px; }
+        .dashboard-btn { background: #00d2ff; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .dashboard-btn:hover { background: #3a7bd5; color: white; }
+        
+        .task-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; }
+        .task-info h4 { color: #00d2ff; font-size: 16px; margin-bottom: 5px; }
+        .task-info p { font-size: 12px; color: #ddd; }
+        
+        .claim-btn { background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .claim-btn:hover { background: #27ae60; }
+        .claim-btn:disabled { background: #7f8c8d; cursor: not-allowed; }
+
+        /* Timer Modal / Box */
+        #timerBox { display: none; text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #f39c12; width: 100%; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        #countdown { font-size: 24px; color: #f39c12; font-weight: bold; margin-top: 10px; margin-bottom: 15px; }
+        
+        /* Ad Container */
+        .ad-container { margin: 10px auto; background: white; width: 300px; height: 250px; display: flex; justify-content: center; align-items: center; border-radius: 5px; overflow: hidden; }
+
+        /* Footer */
+        footer { text-align: center; padding: 15px; font-size: 12px; color: #ddd; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: auto; }
+        footer span { color: #f39c12; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/fdKdZ5p5/file-00000000e05882109418c5b27f912c06.png" alt="Money Hunt Logo">
+        </div>
+        <div class="header">
+            <h2>🎯 Daily Tasks</h2>
+            <a href="dashboard.html" class="dashboard-btn">Dashboard</a>
+        </div>
+
+        <!-- Timer / Ad Simulation Box -->
+        <div id="timerBox">
+            <h3>⏳ Watch Ad & Wait...</h3>
+            <div id="countdown">10</div>
+            
+            <!-- Adsterra Banner Ad Space -->
+            <div class="ad-container">
+                <!-- Adsterra Banner Code (300x250) -->
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0aa85d9af0984624fb2f7940194127f9',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="https://www.highrevenueformat.com/0aa85d9af0984624fb2f7940194127f9/invoke.js"></script>
+            </div>
+        </div>
+
+        <!-- Tasks List -->
+        <div id="tasksList" style="width: 100%;">
+            <!-- Task 1 -->
+            <div class="task-card">
+                <div class="task-info">
+                    <h4>Task #1</h4>
+                    <p>Reward: <b>Rs 15</b> | 10 Sec</p>
+                </div>
+                <button class="claim-btn" onclick="startTask(1, 15, this)">View Ad</button>
+            </div>
+
+            <!-- Task 2 -->
+            <div class="task-card">
+                <div class="task-info">
+                    <h4>Task #2</h4>
+                    <p>Reward: <b>Rs 15</b> | 10 Sec</p>
+                </div>
+                <button class="claim-btn" onclick="startTask(2, 15, this)">View Ad</button>
+            </div>
+
+            <!-- Task 3 -->
+            <div class="task-card">
+                <div class="task-info">
+                    <h4>Task #3</h4>
+                    <p>Reward: <b>Rs 20</b> | 10 Sec</p>
+                </div>
+                <button class="claim-btn" onclick="startTask(3, 20, this)">View Ad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Adsterra Social Bar Code -->
+    <script type="text/javascript" src="https://pl31060723.profitableratecpmnetwork.com/03/a0/73/03a073df3a084f10e47376af631fded4.js"></script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w", authDomain: "earningapp-a6d67.firebaseapp.com", projectId: "earningapp-a6d67", storageBucket: "earningapp-a6d67.firebasestorage.app", messagingSenderId: "818725738178", appId: "1:818725738178:web:fb7e491248a35a2e960d5b" };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        window.startTask = function(taskId, rewardAmount, btnElement) {
+            if (!currentUser) return;
+
+            const timerBox = document.getElementById('timerBox');
+            const countdownDisplay = document.getElementById('countdown');
+            const tasksList = document.getElementById('tasksList');
+            
+            tasksList.style.display = 'none';
+            timerBox.style.display = 'block';
+            
+            let timeLeft = 10;
+            countdownDisplay.innerText = timeLeft;
+            btnElement.disabled = true;
+
+            let timer = setInterval(async () => {
+                timeLeft--;
+                countdownDisplay.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerBox.style.display = 'none';
+                    tasksList.style.display = 'block';
+
+                    try {
+                        let userRef = doc(db, "Users", currentUser.uid);
+                        let docSnap = await getDoc(userRef);
+
+                        if (!docSnap.exists()) {
+                            userRef = doc(db, "users", currentUser.uid);
+                        }
+
+                        await updateDoc(userRef, { balance: increment(rewardAmount) });
+
+                        alert(`🎉 Success! Rs ${rewardAmount} has been added to your balance.`);
+                        
+                        btnElement.innerText = "Completed";
+                        btnElement.style.background = "#7f8c8d";
+                    } catch (error) {
+                        alert("Error updating balance: " + error.message);
+                        btnElement.disabled = false;
+                    }
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

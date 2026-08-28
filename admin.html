@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); min-height: 100vh; padding: 20px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        
+        .main-container { width: 100%; max-width: 600px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .header-title { display: flex; align-items: center; }
+        .header-title img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #f39c12; margin-right: 12px; }
+        .header-title h2 { color: #f39c12; margin: 0; }
+        .dashboard-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
+        
+        h3 { margin-bottom: 15px; color: #00d2ff; font-size: 18px; border-left: 4px solid #00d2ff; padding-left: 10px; }
+        
+        .section-box { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        
+        .request-card { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .request-card p { font-size: 14px; margin-bottom: 5px; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .approve-btn { background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; flex: 1; }
+        .reject-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; flex: 1; }
+        
+        .no-data { text-align: center; color: #aaa; font-size: 14px; padding: 10px; }
+
+        /* Password Box Styles */
+        #passwordBox { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 30px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 450px; }
+        #passwordBox img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #f39c12; margin-bottom: 15px; box-shadow: 0 0 15px rgba(243,156,18,0.5); }
+        #passwordBox h3 { color: #f39c12; border: none; padding: 0; margin-bottom: 5px; justify-content: center; }
+        #adminPassInput { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.4); color: white; font-size: 16px; margin-bottom: 15px; text-align: center; outline: none; }
+        #unlockBtn { background: #f39c12; color: #000; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        #unlockBtn:hover { background: #d35400; color: white; }
+        
+        /* Ad Container */
+        .ad-container { margin: 20px auto; background: white; width: 300px; height: 250px; display: flex; justify-content: center; align-items: center; border-radius: 5px; overflow: hidden; }
+
+        /* Footer */
+        footer { margin-top: 20px; text-align: center; padding: 15px; font-size: 12px; color: #aaa; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; }
+        footer span { color: #f39c12; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Password Protection Box -->
+        <div id="passwordBox">
+            <img src="https://i.ibb.co/fdKdZ5p5/file-00000000e05882109418c5b27f912c06.png" alt="Money Hunt Logo">
+            <h3>🔒 Money Hunt Admin</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Please enter your secret pin to access the control panel.</p>
+            <input type="password" id="adminPassInput" placeholder="Enter Secret Password">
+            <button id="unlockBtn" onclick="checkAdminPassword()">Unlock Panel</button>
+            <p id="passError" style="color: red; font-size: 14px; margin-top: 10px;"></p>
+        </div>
+
+        <!-- Admin Panel Content (Hidden by Default) -->
+        <div id="adminContent" style="display: none;">
+            <div class="header">
+                <div class="header-title">
+                    <img src="https://i.ibb.co/fdKdZ5p5/file-00000000e05882109418c5b27f912c06.png" alt="Money Hunt Logo">
+                    <h2>👑 Admin Panel</h2>
+                </div>
+                <a href="dashboard.html" class="dashboard-btn">User Dashboard</a>
+            </div>
+
+            <!-- Deposit Requests Section -->
+            <div class="section-box">
+                <h3>💰 Pending Deposit Requests (Min Rs 150)</h3>
+                <div id="depositsList">
+                    <p class="no-data">Loading deposit requests...</p>
+                </div>
+            </div>
+            
+            <!-- Adsterra Banner Ad Space -->
+            <div class="ad-container">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0aa85d9af0984624fb2f7940194127f9',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="https://www.highrevenueformat.com/0aa85d9af0984624fb2f7940194127f9/invoke.js"></script>
+            </div>
+
+            <!-- Withdraw Requests Section -->
+            <div class="section-box">
+                <h3>💸 Pending Withdraw Requests (Min Rs 200)</h3>
+                <div id="withdrawsList">
+                    <p class="no-data">Loading withdraw requests...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Adsterra Social Bar Code -->
+    <script type="text/javascript" src="https://pl31060723.profitableratecpmnetwork.com/03/a0/73/03a073df3a084f10e47376af631fded4.js"></script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w", authDomain: "earningapp-a6d67.firebaseapp.com", projectId: "earningapp-a6d67", storageBucket: "earningapp-a6d67.firebasestorage.app", messagingSenderId: "818725738178", appId: "1:818725738178:web:fb7e491248a35a2e960d5b" };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+
+        const SECRET_ADMIN_PASSWORD = "hameed@123"; 
+
+        window.checkAdminPassword = function() {
+            const enteredPass = document.getElementById('adminPassInput').value;
+            const errorTag = document.getElementById('passError');
+
+            if (enteredPass === SECRET_ADMIN_PASSWORD) {
+                document.getElementById('passwordBox').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                verifyAndLoadData();
+            } else {
+                errorTag.innerText = "❌ Incorrect Password! Try again.";
+            }
+        }
+
+        async function verifyAndLoadData() {
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    let docRef = doc(db, "Users", user.uid);
+                    let docSnap = await getDoc(docRef);
+
+                    if (!docSnap.exists()) {
+                        docRef = doc(db, "users", user.uid);
+                        docSnap = await getDoc(docRef);
+                    }
+
+                    const userRole = docSnap.exists() ? String(docSnap.data().role).trim().toLowerCase() : "";
+
+                    if (docSnap.exists() && userRole === "admin") {
+                        fetchDeposits();
+                        fetchWithdraws();
+                    } else {
+                        alert("Access Denied! Your database role is not admin.");
+                        window.location.href = "dashboard.html";
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        async function fetchDeposits() {
+            const listDiv = document.getElementById('depositsList');
+            try {
+                const q = query(collection(db, "Deposits"), where("status", "==", "Pending"));
+                const querySnapshot = await getDocs(q);
+                
+                listDiv.innerHTML = "";
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = `<p class="no-data">No pending deposits found.</p>`;
+                    return;
+                }
+
+                querySnapshot.forEach((documentSnap) => {
+                    const data = documentSnap.data();
+                    const id = documentSnap.id;
+
+                    listDiv.innerHTML += `
+                        <div class="request-card" id="dep-${id}">
+                            <p><strong>Amount:</strong> Rs ${data.amount}</p>
+                            <p><strong>Method:</strong> ${data.method}</p>
+                            <p><strong>Sender:</strong> ${data.senderDetails}</p>
+                            <p><strong>Transaction ID (TID):</strong> <span style="color: #f39c12; font-weight: bold;">${data.transactionId}</span></p>
+                            <div class="btn-group">
+                                <button class="approve-btn" onclick="handleDeposit('${id}', '${data.uid}', ${data.amount}, 'Approved')">Approve</button>
+                                <button class="reject-btn" onclick="handleDeposit('${id}', '${data.uid}', ${data.amount}, 'Rejected')">Reject</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                listDiv.innerHTML = `<p class="no-data" style="color:red;">Error loading deposits.</p>`;
+            }
+        }
+
+        window.handleDeposit = async function(docId, userUid, amount, actionStatus) {
+            if(!confirm(`Are you sure you want to ${actionStatus} this deposit?`)) return;
+
+            try {
+                await updateDoc(doc(db, "Deposits", docId), { status: actionStatus });
+
+                if (actionStatus === "Approved") {
+                    let userRef = doc(db, "Users", userUid);
+                    await updateDoc(userRef, { balance: increment(amount) }).catch(async () => {
+                        await updateDoc(doc(db, "users", userUid), { balance: increment(amount) });
+                    });
+                }
+
+                alert(`Deposit ${actionStatus} Successfully!`);
+                fetchDeposits(); 
+            } catch (error) {
+                alert("Error updating deposit: " + error.message);
+            }
+        };
+
+        async function fetchWithdraws() {
+            const listDiv = document.getElementById('withdrawsList');
+            try {
+                const q = query(collection(db, "Withdrawals"), where("status", "==", "Pending"));
+                const querySnapshot = await getDocs(q);
+                
+                listDiv.innerHTML = "";
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = `<p class="no-data">No pending withdraws found.</p>`;
+                    return;
+                }
+
+                querySnapshot.forEach((documentSnap) => {
+                    const data = documentSnap.data();
+                    const id = documentSnap.id;
+
+                    listDiv.innerHTML += `
+                        <div class="request-card">
+                            <p><strong>Amount:</strong> Rs ${data.amount}</p>
+                            <p><strong>Method:</strong> ${data.method}</p>
+                            <p><strong>Account Name:</strong> ${data.accountTitle}</p>
+                            <p><strong>Account Number:</strong> <span style="color: #f39c12; font-weight: bold;">${data.accountNumber}</span></p>
+                            <div class="btn-group">
+                                <button class="approve-btn" onclick="handleWithdraw('${id}', '${data.uid}', ${data.amount}, 'Approved')">Mark Paid</button>
+                                <button class="reject-btn" onclick="handleWithdraw('${id}', '${data.uid}', ${data.amount}, 'Rejected')">Reject & Refund</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                listDiv.innerHTML = `<p class="no-data" style="color:red;">Error loading withdraws.</p>`;
+            }
+        }
+
+        window.handleWithdraw = async function(docId, userUid, amount, actionStatus) {
+            if(!confirm(`Are you sure you want to mark this withdraw as ${actionStatus}?`)) return;
+
+            try {
+                await updateDoc(doc(db, "Withdrawals", docId), { status: actionStatus });
+
+                if (actionStatus === "Rejected") {
+                    let userRef = doc(db, "Users", userUid);
+                    await updateDoc(userRef, { balance: increment(amount) }).catch(async () => {
+                        await updateDoc(doc(db, "users", userUid), { balance: increment(amount) });
+                    });
+                }
+
+                alert(`Withdrawal marked as ${actionStatus}!`);
+                fetchWithdraws(); 
+            } catch (error) {
+                alert("Error updating withdrawal: " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

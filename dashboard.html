@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - User Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; color: white; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+        
+        .main-wrapper { max-width: 500px; width: 100%; margin: 0 auto; }
+
+        /* Top Bar */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-profile { display: flex; align-items: center; }
+        .user-profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #f39c12; margin-right: 12px; object-fit: cover; }
+        .top-bar h2 { font-size: 18px; color: #f39c12; }
+        .logout-btn { background: #ff4757; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        
+        /* Balance Card */
+        .balance-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); width: 100%; }
+        .balance-card h3 { font-size: 16px; font-weight: normal; margin-bottom: 10px; color: #ddd; }
+        .balance-card h1 { font-size: 38px; color: #00d2ff; }
+        
+        /* Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; width: 100%; }
+        .menu-item { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; color: white; text-decoration: none; display: block; }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+        .menu-item i { font-size: 24px; margin-bottom: 10px; display: block; }
+        .menu-item span { font-size: 14px; font-weight: bold; }
+
+        /* Ad Container */
+        .ad-container { margin: 20px auto; background: white; width: 300px; height: 250px; display: flex; justify-content: center; align-items: center; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        
+        /* Footer */
+        footer { text-align: center; padding: 15px; font-size: 12px; color: #ddd; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: auto; }
+        footer span { color: #f39c12; font-weight: bold; }
+
+        /* Loading Screen */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e3c72; display: flex; justify-content: center; align-items: center; z-index: 999; font-size: 20px; font-weight: bold; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">Loading Money Hunt...</div>
+
+    <!-- Main Dashboard Content -->
+    <div id="dashboard-content" style="display: none;" class="main-wrapper">
+        
+        <div class="top-bar">
+            <div class="user-profile">
+                <img src="https://i.ibb.co/fdKdZ5p5/file-00000000e05882109418c5b27f912c06.png" alt="Logo">
+                <h2>Hi, <span id="userName">User</span> 👋</h2>
+            </div>
+            <button class="logout-btn" onclick="logoutUser()">Logout</button>
+        </div>
+
+        <div class="balance-card">
+            <h3>Total Balance</h3>
+            <h1>Rs <span id="userBalance">0</span></h1>
+        </div>
+
+        <div class="menu-grid">
+            <!-- Tasks Option (Adsterra) -->
+            <a href="tasks.html" class="menu-item" style="background: rgba(46, 204, 113, 0.2); border-color: #2ecc71;">
+                <i>🎯</i>
+                <span>Daily Tasks<br><small>(Adsterra Tasks)</small></span>
+            </a>
+            <!-- Deposit (Min Rs 150) -->
+            <a href="deposit.html" class="menu-item">
+                <i>💰</i>
+                <span>Deposit<br><small>(Min Rs 150)</small></span>
+            </a>
+            <!-- Withdraw (Min Rs 200) -->
+            <a href="withdraw.html" class="menu-item">
+                <i>💸</i>
+                <span>Withdraw<br><small>(Min Rs 200)</small></span>
+            </a>
+            <a href="plans.html" class="menu-item">
+                <i>📦</i>
+                <span>Buy Plan</span>
+            </a>
+            <a href="orders.html" class="menu-item">
+                <i>📋</i>
+                <span>My Orders</span>
+            </a>
+            <!-- Admin Panel Link -->
+            <a href="admin.html" class="menu-item" style="background: rgba(243, 156, 18, 0.2); border-color: #f39c12;">
+                <i>👑</i>
+                <span>Admin Panel</span>
+            </a>
+            <a href="https://wa.me/923000000000" target="_blank" class="menu-item" style="grid-column: span 2; background: rgba(37, 211, 102, 0.2); border-color: #25D366;">
+                <i>📲</i>
+                <span>WhatsApp Support</span>
+            </a>
+        </div>
+
+        <!-- Adsterra Banner Ad Space (300x250) -->
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '0aa85d9af0984624fb2f7940194127f9',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="https://www.highrevenueformat.com/0aa85d9af0984624fb2f7940194127f9/invoke.js"></script>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Adsterra Social Bar Code -->
+    <script type="text/javascript" src="https://pl31060723.profitableratecpmnetwork.com/03/a0/73/03a073df3a084f10e47376af631fded4.js"></script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w",
+            authDomain: "earningapp-a6d67.firebaseapp.com",
+            projectId: "earningapp-a6d67",
+            storageBucket: "earningapp-a6d67.firebasestorage.app",
+            messagingSenderId: "818725738178",
+            appId: "1:818725738178:web:fb7e491248a35a2e960d5b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docRef = doc(db, "Users", user.uid);
+                let docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    let docRefLower = doc(db, "users", user.uid);
+                    docSnap = await getDoc(docRefLower);
+                }
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    document.getElementById('userName').innerText = userData.name || "User";
+                    document.getElementById('userBalance').innerText = userData.balance || 0;
+                    
+                    document.getElementById('loader').style.display = "none";
+                    document.getElementById('dashboard-content').style.display = "block";
+                } else {
+                    alert("User data not found!");
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        window.logoutUser = function() {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                alert("Error logging out!");
+            });
+        };
+    </script>
+</body>
+</html>

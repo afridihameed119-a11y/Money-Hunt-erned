@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Hunt - Withdraw Funds</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: white; }
+        
+        .main-wrapper { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; margin: auto; }
+
+        .logo-container { text-align: center; margin-bottom: 12px; }
+        .logo-container img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #f39c12; object-fit: cover; box-shadow: 0 0 10px rgba(243,156,18,0.5); }
+
+        .container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; padding: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        h2 { text-align: center; margin-bottom: 10px; color: #f39c12; }
+        .balance-badge { text-align: center; background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: block; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border-radius: 8px; border: none; outline: none; background: rgba(255, 255, 255, 0.9); color: #333; }
+        
+        button { width: 100%; padding: 12px; background: #00d2ff; border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: #3a7bd5; color: white; }
+        
+        /* Ad Container */
+        .ad-container { margin: 20px auto 10px auto; background: white; width: 300px; height: 250px; display: flex; justify-content: center; align-items: center; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        .back-btn { display: block; text-align: center; margin-top: 15px; color: #ddd; text-decoration: none; font-size: 14px; }
+        .back-btn:hover { color: white; }
+        
+        #message { text-align: center; margin-top: 15px; font-weight: bold; font-size: 14px; }
+
+        /* Footer */
+        footer { text-align: center; padding: 15px; font-size: 12px; color: #ddd; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: auto; }
+        footer span { color: #f39c12; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/fdKdZ5p5/file-00000000e05882109418c5b27f912c06.png" alt="Money Hunt Logo">
+        </div>
+        <div class="container">
+            <h2>💸 Withdraw Funds</h2>
+            <div class="balance-badge">Available Balance: Rs <span id="currentBalance">Loading...</span></div>
+
+            <div class="form-group">
+                <label>Amount (Min: Rs 200)</label>
+                <input type="number" id="withAmount" placeholder="Enter Amount" min="200">
+            </div>
+            
+            <div class="form-group">
+                <label>Receive Method</label>
+                <select id="withMethod">
+                    <option value="Easypaisa">Easypaisa</option>
+                    <option value="Jazzcash">JazzCash</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Account Title (Name)</label>
+                <input type="text" id="withTitle" placeholder="Account holder name">
+            </div>
+
+            <div class="form-group">
+                <label>Account Number</label>
+                <input type="number" id="withNumber" placeholder="Enter 11-digit mobile number">
+            </div>
+
+            <button onclick="submitWithdraw()" id="submitBtn">Submit Request</button>
+            <p id="message"></p>
+
+            <!-- Adsterra Banner Ad Space (300x250) -->
+            <div class="ad-container">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0aa85d9af0984624fb2f7940194127f9',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="https://www.highrevenueformat.com/0aa85d9af0984624fb2f7940194127f9/invoke.js"></script>
+            </div>
+
+            <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span>Money Hunt</span>. All Rights Reserved.</p>
+        <p>Developed by <span>HAMEED ULLAH</span></p>
+    </footer>
+
+    <!-- Adsterra Social Bar Code -->
+    <script type="text/javascript" src="https://pl31060723.profitableratecpmnetwork.com/03/a0/73/03a073df3a084f10e47376af631fded4.js"></script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDsUZ9ovtUP818EwaTs1PjRRpANgyGb68w", authDomain: "earningapp-a6d67.firebaseapp.com", projectId: "earningapp-a6d67", storageBucket: "earningapp-a6d67.firebasestorage.app", messagingSenderId: "818725738178", appId: "1:818725738178:web:fb7e491248a35a2e960d5b" };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+        
+        let currentUser = null;
+        let userBalance = 0;
+        const msgBox = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const docRef = doc(db, "Users", user.uid);
+                let docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    let docRefLower = doc(db, "users", user.uid);
+                    docSnap = await getDoc(docRefLower);
+                }
+
+                if (docSnap.exists()) {
+                    userBalance = parseInt(docSnap.data().balance) || 0;
+                    document.getElementById('currentBalance').innerText = userBalance;
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        window.submitWithdraw = async function() {
+            const amount = parseInt(document.getElementById('withAmount').value);
+            const method = document.getElementById('withMethod').value;
+            const title = document.getElementById('withTitle').value;
+            const number = document.getElementById('withNumber').value;
+
+            if (!amount || !title || !number) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Please fill all fields!";
+                return;
+            }
+            if (amount < 200) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Minimum withdraw is Rs 200!";
+                return;
+            }
+            if (amount > userBalance) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Insufficient Balance!";
+                return;
+            }
+
+            try {
+                submitBtn.innerText = "Processing..."; 
+                submitBtn.disabled = true; 
+                msgBox.innerText = "";
+
+                const newBalance = userBalance - amount;
+                
+                let userRef = doc(db, "Users", currentUser.uid);
+                let docSnap = await getDoc(userRef);
+                if (!docSnap.exists()) {
+                    userRef = doc(db, "users", currentUser.uid);
+                }
+
+                await updateDoc(userRef, { balance: newBalance });
+
+                await addDoc(collection(db, "Withdrawals"), {
+                    uid: currentUser.uid,
+                    amount: amount,
+                    method: method,
+                    accountTitle: title,
+                    accountNumber: number,
+                    status: "Pending",
+                    timestamp: serverTimestamp()
+                });
+
+                userBalance = newBalance; 
+                document.getElementById('currentBalance').innerText = userBalance; 
+
+                msgBox.style.color = "#00ff00";
+                msgBox.innerText = "Withdraw Request Sent Successfully!";
+                
+                document.getElementById('withAmount').value = "";
+                document.getElementById('withTitle').value = "";
+                document.getElementById('withNumber').value = "";
+
+                setTimeout(() => { submitBtn.innerText = "Submit Request"; submitBtn.disabled = false; }, 3000);
+            } catch (error) {
+                msgBox.style.color = "red";
+                msgBox.innerText = "Error: " + error.message;
+                submitBtn.innerText = "Submit Request"; 
+                submitBtn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
